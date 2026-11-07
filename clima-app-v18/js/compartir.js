@@ -1,0 +1,12 @@
+/* Compartir el pronóstico como imagen. */
+async function shareImg(){const s=cs(),cn=document.createElement('canvas');cn.width=1080;cn.height=1920;const x=cn.getContext('2d'),dk=isDarkUI(),k=dk&&cur!=='night'?.62:0,gr=x.createLinearGradient(0,0,0,1920);gr.addColorStop(0,k?mixc(s.a,k):s.a);gr.addColorStop(1,k?mixc(s.b,k):s.b);x.fillStyle=gr;x.fillRect(0,0,1080,1920);
+const F='system-ui,-apple-system,Segoe UI,Roboto,sans-serif';x.fillStyle='#fff';x.textAlign='center';
+x.font='600 58px '+F;x.fillText('📍 '+$('city').textContent,540,120);x.font='400 36px '+F;x.globalAlpha=.85;x.fillText(new Date().toLocaleDateString('es',{weekday:'long',day:'numeric',month:'long'}),540,176);x.globalAlpha=1;
+x.font='700 270px '+F;x.fillText(s.t+'°',540,450);x.font='500 58px '+F;x.fillText($('c').textContent,540,535);x.font='400 36px '+F;x.globalAlpha=.9;x.fillText($('s').textContent,540,592);x.globalAlpha=1;
+const im=$('cat').querySelector('img');if(im){try{await im.decode()}catch(e){}const sz=520,px=540-sz/2,py=640;x.save();rr(x,px,py,sz,sz,52);x.clip();x.drawImage(im,px,py,sz,sz);x.restore();x.lineWidth=8;x.strokeStyle='rgba(255,255,255,.85)';rr(x,px,py,sz,sz,52);x.stroke()}
+[['💧',s.r+'%','Lluvia'],['🍃',s.w+' km/h','Viento'],['🕶️',String(s.uv),'UV']].forEach((it,i)=>{const cx=180+i*360;x.font='60px '+F;x.fillText(it[0],cx,1290);x.font='700 50px '+F;x.fillText(it[1],cx,1355);x.font='400 32px '+F;x.globalAlpha=.85;x.fillText(it[2],cx,1400);x.globalAlpha=1});
+const Q=(s.d7||syn7(s)).slice(0,5);Q.forEach((d,i)=>{const cx=108+i*216;x.font='500 36px '+F;x.fillText(d.n.charAt(0).toUpperCase()+d.n.slice(1),cx,1520);x.font='70px '+F;x.fillText(d.e,cx,1610);x.font='700 42px '+F;x.fillText(d.mx+'°',cx,1675);x.font='400 36px '+F;x.globalAlpha=.8;x.fillText(d.mn+'°',cx,1722);x.globalAlpha=1});
+x.font='400 30px '+F;x.globalAlpha=.75;x.fillText('Clima · Datos: Open-Meteo.com',540,1860);x.globalAlpha=1;
+const blob=await new Promise(r=>cn.toBlob(r,'image/png')),file=new File([blob],'clima.png',{type:'image/png'});
+if(navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file],title:'Clima',text:'Clima en '+$('city').textContent});return}catch(e){if(e&&e.name==='AbortError')return}}
+const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='clima.png';document.body.appendChild(a);a.click();a.remove();toast('🖼️ Imagen guardada en tus descargas')}

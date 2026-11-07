@@ -1,0 +1,26 @@
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--c1:#2e8bd8;--c2:#9bd6f7;--glass:rgba(255,255,255,.16);--line:rgba(255,255,255,.28)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;font-family:ui-rounded,"SF Pro Rounded","Nunito","Segoe UI",system-ui,sans-serif;color:#fff;background:linear-gradient(var(--c1),var(--c2));background-attachment:fixed}
+#fx{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+main{position:relative;z-index:1;max-width:920px;margin:0 auto;padding:18px 16px 140px}
+.hero{text-align:center;padding:14px 0 6px}
+.city{font-size:1.05rem;opacity:.9}
+.temp{font-size:6rem;font-weight:700;line-height:1;margin:6px 0;letter-spacing:-3px;text-shadow:0 4px 18px rgba(0,0,0,.15)}
+.cond{font-size:1.25rem}
+.sub{opacity:.85;font-size:.95rem;margin-top:4px}
+.tabs{display:none;gap:8px;overflow-x:auto;padding:14px 0;justify-content:center;flex-wrap:wrap}
+.tabs button{border:1px solid var(--line);background:var(--glass);color:#fff;border-radius:999px;padding:8px 14px;font:inherit;cursor:pointer;backdrop-filter:blur(8px)}
+.tabs button[aria-pressed=true]{background:#fff;color:#1b2b3a}
+.tabs button:focus-visible{outline:2px solid #fff;outline-offset:2px}
+svg{display:block;margin:auto}
+#dep{appearance:none;-webkit-appearance:none;border:1px solid var(--line);background-color:var(--glass);color:#fff;border-radius:999px;padding:9px 38px 9px 16px;font:inherit;font-size:1.05rem;backdrop-filter:blur(10px);background-image:linear-gradient(45deg,transparent 50%,#fff 50%),linear-gradient(135deg,#fff 50%,transparent 50%);background-position:calc(100% - 20px) 55%,calc(100% - 14px) 55%;background-size:6px 6px;background-repeat:no-repeat}
+#dep option{color:#111}
+.depbar{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.mapbtn{border:1px solid var(--line);background:var(--glass);color:#fff;border-radius:999px;padding:9px 16px;font:inherit;font-size:1.05rem;cursor:pointer;backdrop-filter:blur(10px)}
+@media (max-width:420px){.depbar{flex-wrap:nowrap;gap:6px}#dep{font-size:.95rem;padding:9px 32px 9px 14px}.depbar .mapbtn{font-size:.95rem;padding:9px 12px}}
+.tools{display:flex;gap:8px;justify-content:center;margin-top:8px;flex-wrap:wrap}.tools .mapbtn{font-size:.9rem;padding:7px 14px}.tools .mapbtn.on{background:#fff;color:#1b2b3a}
+html.dk{--glass:rgba(6,10,24,.5);--line:rgba(255,255,255,.18)}
+#toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);background:#fff;color:#1b2b3a;padding:9px 14px;border-radius:14px;font-size:.85rem;font-weight:600;box-shadow:0 8px 20px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:.3s;z-index:60;max-width:88vw;text-align:center}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+.updbtn{display:block;margin:6px auto 0;border:0;background:transparent;color:#fff;opacity:.85;font:inherit;font-size:.82rem;cursor:pointer;padding:4px 12px;border-radius:999px}.updbtn.stale{background:rgba(255,193,7,.3);opacity:1}

@@ -1,0 +1,29 @@
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.card{background:var(--glass);border:1px solid var(--line);border-radius:26px;padding:16px 18px;backdrop-filter:blur(14px);box-shadow:0 8px 24px rgba(0,0,0,.12)}
+.card.wide{grid-column:1/-1}
+.card h2{font-size:.95rem;font-weight:600;margin:0 0 8px;opacity:.9}
+.big{font-size:2.2rem;font-weight:700}
+.note{font-size:.9rem;opacity:.9;margin-top:6px}
+.uv{height:10px;border-radius:6px;background:linear-gradient(90deg,#3cb44b,#e6d830,#f39c12,#e74c3c,#8e44ad);position:relative;margin:12px 0 4px}
+.uv b{position:absolute;top:-4px;width:6px;height:18px;border-radius:3px;background:#fff;box-shadow:0 0 0 2px rgba(0,0,0,.25);transition:left 1s}
+.arrow{transition:transform 1s;transform-origin:50px 50px}
+@media (prefers-reduced-motion:reduce){.arrow,.uv b{transition:none}}
+.tap{cursor:pointer;position:relative}
+.tap::after{content:"›";position:absolute;top:10px;right:16px;font-size:1.5rem;opacity:.6}
+.tap:active{transform:scale(.98)}
+.sc{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.sc span{padding:4px 10px;border-radius:999px;background:rgba(255,255,255,.18);font-size:.8rem}.sc span.on{background:#fff;color:#1b2b3a;font-weight:700}
+.act{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-top:1px solid var(--line)}.act .ic{font-size:1.6rem}.act small{display:block;opacity:.92;line-height:1.35;margin-top:2px}
+.st{font-size:.72rem;padding:2px 8px;border-radius:999px;margin-left:6px;vertical-align:middle;font-weight:700}
+.st.no{background:#ff5d5d}.st.ojo{background:#ffb02e;color:#222}.st.ok{background:#3ccf7a;color:#08301a}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin:4px 0 8px}.chips button{border:1px solid var(--line);background:transparent;color:#fff;border-radius:999px;padding:6px 10px;font:inherit;font-size:.8rem;cursor:pointer}.chips button.on{background:#fff;color:#1b2b3a}
+.hscroll{overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:6px}
+.hs{display:flex}.hs>div{flex:0 0 52px;text-align:center;display:flex;flex-direction:column;gap:2px;align-items:center}.hs span{font-size:1.4rem}.hs small{opacity:.85;font-size:.72rem}
+.w7{display:grid;grid-template-columns:44px 28px 54px 32px 1fr 32px;gap:8px;align-items:center;padding:9px 0;border-top:1px solid var(--line)}.w7:first-of-type{border-top:0}
+.w7 .nm{text-transform:capitalize;font-weight:600}.w7 .ic{font-size:1.3rem}.w7 .rn{font-size:.82rem;opacity:.9}.w7 .lo{opacity:.85;text-align:right}.w7 .hi{font-weight:700}
+.w7 .bar{position:relative;height:6px;border-radius:3px;background:rgba(255,255,255,.22)}.w7 .bar i{position:absolute;top:0;bottom:0;border-radius:3px;background:linear-gradient(90deg,#ffd54a,#ff8a3d)}
+.al{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:16px;margin:8px 0;border:1px solid var(--line)}.al.ojo{background:rgba(120,78,0,.5);border-color:rgba(255,193,7,.75)}.al.no{background:rgba(135,18,30,.58);border-color:rgba(255,120,120,.85)}.al.ok{background:rgba(20,100,50,.5)}.al .ic{font-size:1.6rem}.al small{display:block;opacity:.95;line-height:1.35;margin-top:2px}
+.lk{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}.lk a{color:#fff;border:1px solid var(--line);background:var(--glass);border-radius:999px;padding:8px 14px;text-decoration:none;font-size:.9rem}
+.aq{display:flex;gap:14px;align-items:center;margin:6px 0 10px}.aqn{font-size:2.6rem;line-height:1;min-width:84px;white-space:nowrap}.aq small{display:block;opacity:.92;line-height:1.35;margin-top:2px}
+.aqb{height:8px;border-radius:4px;position:relative;margin:6px 0 12px;background:linear-gradient(90deg,#4caf50 0 17%,#ffd54a 17% 33%,#ff9800 33% 50%,#f44336 50% 67%,#9c27b0 67% 100%)}.aqb i{position:absolute;top:-4px;width:4px;height:16px;border-radius:2px;background:#fff;box-shadow:0 0 0 2px rgba(0,0,0,.35);transform:translateX(-50%)}
+.aqk{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.88rem;opacity:.95;margin-bottom:6px}
+.wb{display:flex;align-items:flex-end;gap:3px;height:40px;margin:6px 0}.wb i{flex:1;background:rgba(255,255,255,.65);border-radius:3px 3px 0 0}
