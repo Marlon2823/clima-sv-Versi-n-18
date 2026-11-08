@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Clima</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#2e8bd8">
+<link rel="icon" href="icon-192.png">
+<link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+<div id="splash" role="status" aria-label="Cargando"><div class="sun"></div><span class="c1">☁️</span><span class="c2">☁️</span><div class="sbox"><div class="scat"><svg viewBox="0 -30 200 255" aria-hidden="true"><path d="M148 200q48-6 36-62" fill="none" stroke="#f0a04b" stroke-width="16" stroke-linecap="round"/><ellipse cx="100" cy="165" rx="55" ry="52" fill="#f0a04b"/><ellipse cx="80" cy="208" rx="16" ry="10" fill="#f7b868"/><ellipse cx="120" cy="208" rx="16" ry="10" fill="#f7b868"/><circle cx="100" cy="90" r="42" fill="#f0a04b"/><path d="M64 62L68 22L98 50Z" fill="#f0a04b"/><path d="M136 62L132 22L102 50Z" fill="#f0a04b"/><path d="M71 52L72 33L88 48Z" fill="#f5a9b8"/><path d="M129 52L128 33L112 48Z" fill="#f5a9b8"/><path d="M100 48v12M90 50l2 10M110 50l-2 10" stroke="#c97a2b" stroke-width="3" stroke-linecap="round"/><circle cx="85" cy="88" r="5" fill="#222"/><circle cx="115" cy="88" r="5" fill="#222"/><path d="M95 99h10l-5 6z" fill="#f08a9b"/><path d="M100 105q-5 7-11 3M100 105q5 7 11 3" fill="none" stroke="#7a4a1e" stroke-width="2" stroke-linecap="round"/><path d="M60 100l-26-4M60 106l-26 4M140 100l26-4M140 106l26 4" stroke="#fff" stroke-width="1.6" opacity=".8"/></svg></div><h1>Clima con Gato</h1><p>Preguntándole al cielo…</p><div class="dots"><i></i><i></i><i></i></div></div></div>
+
+<canvas id="fx"></canvas>
+<main>
+  <section class="hero">
+    <div class="depbar"><select id="dep" aria-label="Departamento"></select><button id="mapbtn" class="mapbtn" aria-label="Elegir en el mapa">🗺️ Mapa</button></div><div class="tools"><button id="sndbtn" class="mapbtn" aria-label="Activar sonido" aria-pressed="false">🔇 Sonido</button><button id="ajbtn" class="mapbtn" aria-label="Ajustes">⚙️ Ajustes</button></div><div id="city" hidden></div>
+    <div class="temp" id="t"></div>
+    <div class="cond" id="c"></div>
+    <div class="sub" id="s"></div>
+    <button id="upd" class="updbtn" aria-label="Actualizar pronóstico"></button>
+    <div class="cat" id="cat"></div>
+  </section>
+  <div class="tabs" id="tabs" role="group" aria-label="Probar condiciones"></div>
+  <section class="grid" id="g"></section>
+  <p class="note" id="foot" style="text-align:center;margin-top:18px">Datos: Open-Meteo.com · Aire: CAMS · Oleaje: DWD · Radar: RainViewer · Mapas © OpenStreetMap</p>
+</main>
+<div id="md" role="dialog" aria-modal="true"><div id="mb"></div></div>
+<script src="app.js"></script>
+</body>
+</html>
