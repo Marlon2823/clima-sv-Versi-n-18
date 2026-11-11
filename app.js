@@ -1,5 +1,5 @@
 /* Constantes: paletas de cada estado del clima, departamentos y versión de la app. */
-const APP_VERSION='21';
+const APP_VERSION='22';
 const S={
 sun:{n:'Soleado',e:'☀️',a:'#2e8bd8',b:'#9bd6f7',t:32,f:35,r:5,c:10,uv:10,w:12,dir:60,h:46,sun:.55},
 cloud:{n:'Nublado',e:'⛅',a:'#5d7388',b:'#b3c2d0',t:27,f:29,r:25,c:78,uv:4,w:18,dir:120,h:68,sun:.55},
@@ -40,7 +40,7 @@ function rnow(){return cur==='rain'||cur==='storm'}
 /* Ajustes: preferencias guardadas en el celular y la pantalla de ajustes. */
 const AVISOS_KEYS=['aTormenta','aLluvia','aViento','aCalor','aAire','aOleaje'];
 const AVISO_ETIQ=[['aTormenta','⛈️ Tormenta eléctrica'],['aLluvia','🌧️ Lluvia intensa'],['aViento','💨 Viento fuerte'],['aCalor','🥵 Calor intenso'],['aAire','🌫️ Aire dañino'],['aOleaje','🌊 Oleaje fuerte']];
-const AJ_BASE={tema:'auto',ahorro:false,ahorroAuto:true,volumen:90,sRain:true,sBirds:true,sNight:true,aTormenta:true,aLluvia:true,aViento:true,aCalor:true,aAire:true,aOleaje:true,lugarInicio:'ultimo'};
+const AJ_BASE={tema:'auto',ahorro:false,ahorroAuto:true,volumen:90,sRain:true,sBirds:true,sNight:true,gotas:true,inclinar:true,vibrar:true,sGato:true,aTormenta:true,aLluvia:true,aViento:true,aCalor:true,aAire:true,aOleaje:true,lugarInicio:'ultimo'};
 let AJ={...AJ_BASE};
 function cargarAjustes(){let o=null;try{o=JSON.parse(localStorage.getItem('ajustes'))}catch(e){}
 AJ={...AJ_BASE,...(o||{})};
@@ -52,8 +52,8 @@ const seg=(id,lst,cur)=>'<div class="chips" id="'+id+'">'+lst.map(t=>'<button da
 mb.innerHTML='<button id="mx" aria-label="Cerrar">✕</button><h3>⚙️ Ajustes</h3><div id="ajw">'
 +'<h4 class="ajh">🎨 Apariencia</h4>'+seg('ajtema',[['auto','🌓 Auto'],['dark','🌙 Oscuro'],['light','☀️ Claro']],AJ.tema)+'<p class="note">Auto: se oscurece de noche o si tu celular usa modo oscuro.</p>'
 +'<h4 class="ajh">🔊 Sonido</h4>'+swHTML('ajson','Activar sonido',want,'Se apaga al cerrar la app')+'<div class="sw"><span>Volumen</span><input type="range" id="ajvol" min="10" max="100" step="5" value="'+AJ.volumen+'" aria-label="Volumen"></div>'
-+swHTML('ajrain','Lluvia y truenos',AJ.sRain)+swHTML('ajbirds','Pájaros (día cálido)',AJ.sBirds)+swHTML('ajnight','Grillos, ranas y búho (noche)',AJ.sNight)
-+'<h4 class="ajh">🔋 Batería y animaciones</h4>'+swHTML('ajsaver','Modo ahorro',SAVER,'Sin animaciones ni sonido y menos actualizaciones')+swHTML('ajsauto','Activarlo con batería baja (15 %)',AJ.ahorroAuto)
++swHTML('ajgato','El gato maúlla al tocarlo',AJ.sGato)+swHTML('ajrain','Lluvia y truenos',AJ.sRain)+swHTML('ajbirds','Pájaros (día cálido)',AJ.sBirds)+swHTML('ajnight','Grillos, ranas y búho (noche)',AJ.sNight)
++'<h4 class="ajh">🔋 Batería y animaciones</h4>'+swHTML('ajsaver','Modo ahorro',SAVER,'Sin animaciones ni sonido y menos actualizaciones')+swHTML('ajsauto','Activarlo con batería baja (15 %)',AJ.ahorroAuto)+swHTML('ajgotas','Gotas en el cristal (con lluvia)',AJ.gotas)+swHTML('ajinclinar','Efecto 3D al inclinar el celular',AJ.inclinar)+swHTML('ajvibrar','Vibrar con los truenos',AJ.vibrar)
 +'<h4 class="ajh">⚠️ Avisos del clima</h4>'+AVISO_ETIQ.map(a=>swHTML('aj_'+a[0],a[1],AJ[a[0]])).join('')
 +'<h4 class="ajh">📍 Lugares</h4><p class="note" style="margin-bottom:4px">Al abrir la app mostrar:</p>'+seg('ajinicio',[['ultimo','📌 El último lugar'],['gps','📍 Mi ubicación']],AJ.lugarInicio)
 +'<p class="note" style="margin:10px 0 2px">Favoritos:</p>'+(F.length?F.map((f,i)=>'<div class="fvr"><span>⭐ '+esc(f.name)+'</span><button data-q="'+i+'" aria-label="Quitar de favoritos">✕</button></div>').join(''):'<p class="note">Aún no tienes favoritos. Búscalos con el botón de abajo y toca la ☆.</p>')
@@ -64,8 +64,8 @@ $('md').classList.add('on');const w=$('ajw');
 const refrescar=()=>{const y=mb.scrollTop;abrirAjustes();mb.scrollTop=y};
 w.onchange=e=>{const t=e.target,id=t.id;if(id==='ajson'){setSnd(t.checked);t.checked=want;return}
 if(id==='ajsaver'){setSaver(t.checked,true);t.checked=SAVER;return}
-const m={ajrain:'sRain',ajbirds:'sBirds',ajnight:'sNight',ajsauto:'ahorroAuto'};
-if(m[id]){AJ[m[id]]=t.checked;guardarAjustes();updateSound();return}
+const m={ajrain:'sRain',ajbirds:'sBirds',ajnight:'sNight',ajsauto:'ahorroAuto',ajgato:'sGato',ajgotas:'gotas',ajinclinar:'inclinar',ajvibrar:'vibrar'};
+if(m[id]){AJ[m[id]]=t.checked;guardarAjustes();updateSound();kickCristal();return}
 if(id.startsWith('aj_')){AJ[id.slice(3)]=t.checked;guardarAjustes();refrescarAvisos();return}};
 w.oninput=e=>{if(e.target.id==='ajvol'){AJ.volumen=+e.target.value;guardarAjustes();aplicarVolumen()}};
 w.onclick=e=>{const b=e.target.closest('button,a');if(!b)return;const p=b.parentElement&&b.parentElement.id;
@@ -89,7 +89,7 @@ try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{if
 /* Modo ahorro de batería (la preferencia vive en AJ.ahorro, ver ajustes.js). */
 let SAVER=false;
 function setSaver(on,silent){SAVER=on;AJ.ahorro=on;guardarAjustes();document.documentElement.classList.toggle('sv',on);
-if(on){if(want)setSnd(false);kick()}else kick();if(!silent)toast(on?'🔋 Modo ahorro: sin animaciones ni sonido, menos actualizaciones':'⚡ Modo ahorro apagado')}
+if(on){if(want)setSnd(false);kick()}else kick();kickCristal();if(!silent)toast(on?'🔋 Modo ahorro: sin animaciones ni sonido, menos actualizaciones':'⚡ Modo ahorro apagado')}
 function iniciarAhorro(){
 SAVER=AJ.ahorro;
 document.documentElement.classList.toggle('sv',SAVER);
@@ -187,7 +187,7 @@ let lastPose='';
 function drawCat(){const h=nowH(),p=poseFor(h),c=$('cat');
 if(p===lastPose&&c.querySelector('img')){const b=c.querySelector('.bub');if(b)b.textContent=tipFor(p,h);return}
 lastPose=p;
-c.innerHTML='<div class="cpic'+(p==='frio'?' shiver':'')+'"><img src="gato-'+p+'.webp" alt="" width="768" height="768"></div><div class="bub">'+tipFor(p,h)+'</div>';
+c.innerHTML='<div class="cpic'+(p==='frio'?' shiver':'')+'" role="button" tabindex="0" aria-label="Acariciar al gato"><img src="gato-'+p+'.webp" alt="" width="768" height="768"></div><div class="bub">'+tipFor(p,h)+'</div>';
 c.querySelector('img').onerror=()=>{lastPose='';drawCatSVG()}}
 function drawCatSVG(){
 const k=cur,f='#f0a04b';
@@ -210,6 +210,16 @@ if(k==='rain'||k==='storm')s+='<path d="M25 22Q100 -50 175 22Q155 12 137 22Q119 
 if(k==='night')s+='<path d="M70 55L120 -5L138 52Z" fill="#c0392b"/><rect x="66" y="48" width="76" height="10" rx="5" fill="#fff"/><circle cx="122" cy="-6" r="8" fill="#fff"/><text x="150" y="30" font-size="18" fill="#fff">z z</text>';
 $('cat').innerHTML='<div class="bub">'+TIP[k]+'</div><svg viewBox="0 -30 200 255" class="'+(k==='cold'?'shiver':'')+'" aria-hidden="true">'+s+'</svg>';
 }
+
+const GATO_MSG={gen:['¡Miau!','¡Cosquillas!','Prrrr… 😻','¿Ya es hora de comer?','¡Me gusta que me toques!'],sol:['¡Con estilo, ¿no? 😎','¡Qué calor!'],lluvia:['¡Cuidado con mi paraguas! ☂️','¡No me mojes!'],frio:['Brrr… ¡qué frío!','¿Me prestas tu abrigo?'],noche:['Zzz… ¡me despertaste!','Shhh… estoy durmiendo 😴'],manana:['¿Me das un cafecito? ☕','¡Buenos días!'],ejercicio:['¡Uno, dos, uno, dos! 💪','¡Casi llego a la meta!'],casa:['¡Mi chocolatito! 🍫','Película y manta, ¡qué rico!']};
+let gatoMsgT=null,gatoUlt='';
+function corazones(c){const n=1+(Math.random()*2|0);for(let i=0;i<n;i++){const e=document.createElement('span');e.className='cz';e.textContent=['❤️','💖','😻'][Math.random()*3|0];e.style.left=(30+Math.random()*40)+'%';e.style.animationDelay=(i*.12)+'s';c.appendChild(e);setTimeout(()=>e.remove(),1500)}}
+function tocarGato(){const c=$('cat'),pic=c.querySelector('.cpic'),b=c.querySelector('.bub');if(!pic)return;
+pic.classList.remove('salto');void pic.offsetWidth;pic.classList.add('salto');setTimeout(()=>pic.classList.remove('salto'),600);
+const lst=(GATO_MSG[lastPose]||[]).concat(GATO_MSG.gen);let m;do{m=lst[Math.random()*lst.length|0]}while(m===gatoUlt&&lst.length>1);gatoUlt=m;
+if(b){b.textContent=m;clearTimeout(gatoMsgT);gatoMsgT=setTimeout(()=>{const bb=$('cat').querySelector('.bub');if(bb)bb.textContent=tipFor(lastPose,nowH())},3200)}
+miau();if(!(SAVER||NOANIM))corazones(c)}
+function iniciarGato(){const c=$('cat');c.addEventListener('click',e=>{if(e.target.closest('.cpic'))tocarGato()});c.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.closest('.cpic')){e.preventDefault();tocarGato()}})}
 
 /* Pantalla principal: tarjetas, gráficas de 24 h y 7 días, ventanas de detalle. */
 function arc(s){const p=s.sun;let d='';if(p!==null){const x=100-90*Math.cos(Math.PI*p),y=90-90*Math.sin(Math.PI*p);d='<circle cx="'+x+'" cy="'+y+'" r="7" fill="#ffd54a"/>'}
@@ -374,8 +384,8 @@ for(let i=0;i<N;i++){const m=i%100,z=m<50?0:m<82?1:2;drops[z].push(nd(z,true))}
 const n=Math.round(s.c/12)+1+(wet?3:0);
 clouds=Array.from({length:n},(_,i)=>{const L=i%3;return{x:Math.random()*W,y:20+Math.random()*H*(L===2?.4:.28),k:[.6+Math.random()*.3,1+Math.random()*.4,1.5+Math.random()*.5][L],v:[.08,.16,.3][L]*(.7+Math.random()*.6),a:[.5,.7,.85][L],i:Math.floor(Math.random()*3),L}}).sort((a,b)=>a.L-b.L);
 stars=Array.from({length:110},(_,i)=>({x:Math.random()*W,y:Math.random()*H*.7,p:Math.random()*6,r:.6+Math.random()*1.5,c:i%7===0?'#fff1c9':i%5===0?'#cfe0ff':'#fff'}));
-birds=[];splash=[];bolt=null;ff=Array.from({length:14},()=>({x:Math.random()*W,y:H*(.4+Math.random()*.55),t:Math.random()*20,p:Math.random()*6}));updateSound();if(SAVER)kick()}
-function sunFX(a){const x=W*.82,y=110;g.save();g.globalAlpha=a;
+birds=[];splash=[];bolt=null;ff=Array.from({length:14},()=>({x:Math.random()*W,y:H*(.4+Math.random()*.55),t:Math.random()*20,p:Math.random()*6}));updateSound();kickCristal();if(SAVER)kick()}
+function sunFX(a){const x=W*.82+INC.x*8,y=110+INC.y*6;g.save();g.globalAlpha=a;
 const pl=1+Math.sin(tick/70)*.04;let gr=g.createRadialGradient(x,y,12,x,y,200*pl);gr.addColorStop(0,'rgba(255,244,180,.9)');gr.addColorStop(.22,'rgba(255,226,120,.4)');gr.addColorStop(1,'rgba(255,226,120,0)');g.fillStyle=gr;g.beginPath();g.arc(x,y,200*pl,0,7);g.fill();
 if(!RAYS)RAYS=mkRays();g.translate(x,y);g.rotate(tick/1100);g.drawImage(RAYS,-380,-380);g.rotate(-tick/1100);g.translate(-x,-y);
 gr=g.createRadialGradient(x-8,y-8,4,x,y,40);gr.addColorStop(0,'#fffbe0');gr.addColorStop(.55,'#ffe066');gr.addColorStop(1,'#ffb93b');g.fillStyle=gr;g.beginPath();g.arc(x,y,38,0,7);g.fill();
@@ -384,7 +394,7 @@ g.restore()}
 function nightFX(){stars.forEach(a=>{g.globalAlpha=.25+.75*Math.abs(Math.sin(tick/50+a.p));g.fillStyle=a.c;g.beginPath();g.arc(a.x,a.y,a.r,0,7);g.fill()});g.globalAlpha=1;
 if(!shoot&&Math.random()<.002)shoot={x:W*(.3+Math.random()*.6),y:20+Math.random()*H*.2,vx:-9-Math.random()*4,vy:4+Math.random()*2,t:0};
 if(shoot){shoot.x+=shoot.vx;shoot.y+=shoot.vy;shoot.t++;const al=Math.max(0,1-shoot.t/38),gr=g.createLinearGradient(shoot.x,shoot.y,shoot.x-shoot.vx*6,shoot.y-shoot.vy*6);gr.addColorStop(0,'rgba(255,255,255,'+al+')');gr.addColorStop(1,'rgba(255,255,255,0)');g.strokeStyle=gr;g.lineWidth=2;g.beginPath();g.moveTo(shoot.x,shoot.y);g.lineTo(shoot.x-shoot.vx*6,shoot.y-shoot.vy*6);g.stroke();if(shoot.t>38)shoot=null}
-const mx=W*.82,my=100;let gr=g.createRadialGradient(mx,my,20,mx,my,120);gr.addColorStop(0,'rgba(225,232,255,.4)');gr.addColorStop(1,'rgba(225,232,255,0)');g.fillStyle=gr;g.beginPath();g.arc(mx,my,120,0,7);g.fill();
+const mx=W*.82+INC.x*8,my=100+INC.y*6;let gr=g.createRadialGradient(mx,my,20,mx,my,120);gr.addColorStop(0,'rgba(225,232,255,.4)');gr.addColorStop(1,'rgba(225,232,255,0)');g.fillStyle=gr;g.beginPath();g.arc(mx,my,120,0,7);g.fill();
 gr=g.createRadialGradient(mx-8,my-8,4,mx,my,32);gr.addColorStop(0,'#fffdf0');gr.addColorStop(1,'#e3dfc0');g.fillStyle=gr;g.beginPath();g.arc(mx,my,30,0,7);g.fill();
 g.fillStyle='rgba(150,148,125,.28)';[[-9,-6,6],[8,4,8],[-2,13,4],[11,-11,3.5]].forEach(c=>{g.beginPath();g.arc(mx+c[0],my+c[1],c[2],0,7);g.fill()})}
 function spawnBird(){const dir=Math.random()<.5?1:-1;birds.push({x:dir>0?-30:W+30,y:H*(.1+Math.random()*.3),v:dir*(.8+Math.random()*1.1),s:7+Math.random()*7,p:Math.random()*6,b:Math.random()*6,a:10+Math.random()*14});chirp(dir>0?-.6:.6,.07)}
@@ -392,20 +402,22 @@ function birdFX(){birds=birds.filter(b=>b.x>-60&&b.x<W+60);birds.forEach(b=>{b.x
 function makeBolt(){const pts=[];let x=W*(.2+Math.random()*.6),y=0;pts.push([x,y]);while(y<H*.55){y+=18+Math.random()*28;x+=(Math.random()-.5)*50;pts.push([x,y])}
 const br=[];for(let i=3;i<pts.length-1;i+=3){if(Math.random()<.6){let bx=pts[i][0],by=pts[i][1];const q=[[bx,by]];for(let k=0;k<4;k++){bx+=(Math.random()-.3)*30*(Math.random()<.5?-1:1);by+=14+Math.random()*18;q.push([bx,by])}br.push(q)}}
 return{pts,br,life:10}}
-function boltFX(){if(!bolt)return;bolt.life--;if(bolt.life<=0){bolt=null;return}if(bolt.life%4===1)return;g.save();g.shadowColor='rgba(190,210,255,.95)';g.shadowBlur=20;g.lineJoin='round';
+function boltFX(){if(!bolt)return;bolt.life--;if(bolt.life<=0){bolt=null;return}if(bolt.life%4===1)return;g.save();{const bg=g.createRadialGradient(bolt.pts[0][0],0,4,bolt.pts[0][0],0,200);bg.addColorStop(0,'rgba(200,215,255,.45)');bg.addColorStop(1,'rgba(200,215,255,0)');g.fillStyle=bg;g.fillRect(0,0,W,280)}g.shadowColor='rgba(190,210,255,.95)';g.shadowBlur=20;g.lineJoin='round';
 const path=p=>{g.beginPath();p.forEach((q,i)=>i?g.lineTo(q[0],q[1]):g.moveTo(q[0],q[1]));g.stroke()};
 g.strokeStyle='rgba(255,255,255,.95)';g.lineWidth=2.4;path(bolt.pts);g.strokeStyle='rgba(215,228,255,.7)';g.lineWidth=1.2;bolt.br.forEach(path);g.restore()}
-function draw(){tick++;g.setTransform(DPRc,0,0,DPRc,0,0);g.clearRect(0,0,W,H);const s=cs(),wet=cur==='rain'||cur==='storm',st=cur==='storm',night=cur==='night';
+function draw(){tick++;g.setTransform(DPRc,0,0,DPRc,0,0);g.clearRect(0,0,W,H);const s=cs(),wet=cur==='rain'||cur==='storm',st=cur==='storm',night=cur==='night',gk=1+(Math.sin(tick/140)*.3+Math.sin(tick/53+1)*.18)*Math.min(1,.3+s.w/30);
 if(night)nightFX();else if(cur==='sun'||cur==='cloud')sunFX(cur==='sun'?1:.55);
 const sp=(wet||night)?CL.dark:CL.light,ca=night?.45:(document.documentElement.classList.contains('dk')?.55:1);
-clouds.forEach(c=>{c.x+=c.v;if(c.x>W+40)c.x=-300*c.k;g.globalAlpha=c.a*ca;g.drawImage(sp[c.i],c.x,c.y,300*c.k,140*c.k)});g.globalAlpha=1;
+clouds.forEach(c=>{c.x+=c.v*gk;if(c.x>W+40)c.x=-300*c.k;g.globalAlpha=c.a*ca;g.drawImage(sp[c.i],c.x+INC.x*10*(c.L+1),c.y+INC.y*5*(c.L+1),300*c.k,140*c.k)});
+if(flash>0&&CL){g.save();g.globalCompositeOperation='lighter';clouds.forEach(c=>{g.globalAlpha=Math.min(.5,flash*.55)*c.a;g.drawImage(CL.light[c.i],c.x+INC.x*10*(c.L+1),c.y+INC.y*5*(c.L+1),300*c.k,140*c.k)});g.restore()}g.globalAlpha=1;
 if(SKY.birds&&birds.length<3&&Math.random()<.0035)spawnBird();birdFX();if(SKY.night)flyFX();
-if(wet){const wx=-(.7+s.w*.045)*(st?1.5:1),LS=[['rgba(195,215,240,.3)',.8],['rgba(210,228,250,.45)',1.2],['rgba(228,240,255,.65)',1.8]];
+if(wet){const wx=-(.7+s.w*.045)*(st?1.5:1)*gk,LS=[['rgba(195,215,240,.3)',.8],['rgba(210,228,250,.45)',1.2],['rgba(228,240,255,.65)',1.8]];
 drops.forEach((arr,z)=>{g.strokeStyle=LS[z][0];g.lineWidth=LS[z][1];g.beginPath();arr.forEach(d=>{d.y+=d.v;d.x+=wx;if(d.y>H){if(z>0&&splash.length<50&&Math.random()<.5)splash.push({x:d.x,y:H-6-Math.random()*10,t:0});d.y=-d.l;d.x=Math.random()*(W+160)}else if(d.x<-30)d.x+=W+160;g.moveTo(d.x,d.y);g.lineTo(d.x-wx*d.l/d.v,d.y-d.l)});g.stroke()});
 g.lineWidth=1;splash=splash.filter(p=>p.t<12);splash.forEach(p=>{p.t++;g.strokeStyle='rgba(225,238,255,'+(.55*(1-p.t/12))+')';g.beginPath();g.ellipse(p.x,p.y,2+p.t*.9,(2+p.t*.9)*.33,0,0,7);g.stroke()});
 const mg2=g.createLinearGradient(0,H-160,0,H);mg2.addColorStop(0,'rgba(190,210,230,0)');mg2.addColorStop(1,'rgba(190,210,230,.2)');g.fillStyle=mg2;g.fillRect(0,H-160,W,160)}
-if(st){if(Math.random()<.006){flash=1;bolt=makeBolt();thunder(.4+Math.random()*2.2)}boltFX();if(flash>0){g.fillStyle='rgba(255,255,255,'+flash*.42+')';g.fillRect(0,0,W,H);flash-=.06}}
+if(st){if(Math.random()<.006){flash=1;bolt=makeBolt();const dT=.4+Math.random()*2.2;thunder(dT);vibrarTrueno(dT)}boltFX();if(flash>0){g.fillStyle='rgba(255,255,255,'+flash*.42+')';g.fillRect(0,0,W,H);flash-=.06}}
 if(SAVER||NOANIM){drawing=false;return}requestAnimationFrame(draw)}
+function vibrarTrueno(d){if(!AJ.vibrar||SAVER||!navigator.vibrate)return;setTimeout(()=>{if(cur==='storm'&&!document.hidden)try{navigator.vibrate([40,40,90,40,60])}catch(e){}},d*1000)}
 function kick(){if(drawing)return;drawing=true;draw()}
 function flyFX(){ff.forEach((f,i)=>{f.t+=.012;const x=f.x+Math.sin(f.t*1.3+i)*40,y=f.y+Math.cos(f.t+i*2)*24,a=Math.pow(Math.max(0,Math.sin(f.t*2.1+f.p)),2);if(a<.02)return;g.fillStyle='rgba(215,255,120,'+(a*.28)+')';g.beginPath();g.arc(x,y,9,0,7);g.fill();g.fillStyle='rgba(240,255,170,'+a+')';g.beginPath();g.arc(x,y,2.2,0,7);g.fill()})}
 function reiniciarCanvas(){rs();if(!drawing)kick()}
@@ -421,6 +433,34 @@ const RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
 NOANIM=RM;
 if(!RM){drawing=true;draw()}else{tick=0;g.clearRect(0,0,W,H)}
 }
+
+/* Gotas de lluvia en el cristal: capa transparente por encima de la pantalla (no estorba los toques). */
+let GL=null,GW=0,GH=0,GD=1,gotas=[],gDrawing=false,gUlt=0,gFade=1;
+function iniciarCristal(){const cv=$('glass');if(!cv)return;GL=cv.getContext('2d');rsCristal();addEventListener('resize',rsCristal)}
+function rsCristal(){const cv=$('glass');if(!cv)return;GD=Math.min(2,devicePixelRatio||1);GW=innerWidth;GH=innerHeight;cv.width=GW*GD;cv.height=GH*GD}
+function cristalActivo(){return AJ.gotas&&!SAVER&&!NOANIM&&(cur==='rain'||cur==='storm')}
+function kickCristal(){if(GL&&!gDrawing){gDrawing=true;gUlt=performance.now();requestAnimationFrame(cristalPaso)}}
+function cristalPaso(now){const activo=cristalActivo();GL.setTransform(GD,0,0,GD,0,0);GL.clearRect(0,0,GW,GH);
+if(!activo&&!gotas.length){gDrawing=false;return}
+const dt=Math.min(.05,Math.max(.001,(now-gUlt)/1000));gUlt=now;gFade=activo?Math.min(1,gFade+dt*1.2):Math.max(0,gFade-dt*.8);
+if(!activo&&gFade<=0){gotas=[];gDrawing=false;return}
+if(activo&&gotas.length<(cur==='storm'?36:28)&&Math.random()<.18)gotas.push({x:Math.random()*GW,y:Math.random()*GH*.92,r:1.5+Math.random()*2.6,vy:0,t:0,tope:5+Math.random()*3.5,tr:[]});
+for(const g of gotas){g.t+=dt;if(!g.vy){g.r+=dt*(.35+Math.random()*.5);if(g.r>g.tope)g.vy=45+Math.random()*50}else{g.vy*=1+dt*.5;g.y+=g.vy*dt;g.r=Math.max(1.2,g.r-dt*.6);g.tr.push([g.x,g.y]);if(g.tr.length>26)g.tr.shift()}}
+gotas=gotas.filter(g=>g.y<GH+12&&(g.vy||g.t<40));
+GL.save();GL.globalAlpha=gFade;
+for(const g of gotas){if(g.tr.length>1){GL.strokeStyle='rgba(220,235,255,.17)';GL.lineWidth=g.r*.7;GL.lineCap='round';GL.beginPath();GL.moveTo(g.tr[0][0],g.tr[0][1]);for(const q of g.tr)GL.lineTo(q[0],q[1]);GL.stroke()}
+const gr=GL.createRadialGradient(g.x-g.r*.3,g.y-g.r*.35,g.r*.1,g.x,g.y,g.r*1.1);gr.addColorStop(0,'rgba(255,255,255,.55)');gr.addColorStop(.45,'rgba(200,225,255,.16)');gr.addColorStop(1,'rgba(20,40,70,.3)');
+GL.fillStyle=gr;GL.beginPath();GL.ellipse(g.x,g.y,g.r*.9,g.r*1.15,0,0,7);GL.fill();GL.fillStyle='rgba(255,255,255,.8)';GL.beginPath();GL.arc(g.x-g.r*.3,g.y-g.r*.4,g.r*.22,0,7);GL.fill()}
+GL.restore();requestAnimationFrame(cristalPaso)}
+
+/* Efecto 3D: el gato, el cielo y la temperatura se desplazan un poco al inclinar el celular. */
+let INC={x:0,y:0,tx:0,ty:0,vivo:false};
+function inclinarActivo(){return AJ.inclinar&&!SAVER&&!NOANIM}
+function pasoInclinar(){const r=document.documentElement.style;
+if(inclinarActivo()){INC.x+=(INC.tx-INC.x)*.08;INC.y+=(INC.ty-INC.y)*.08}else{INC.x*=.9;INC.y*=.9}
+r.setProperty('--ix',INC.x.toFixed(3));r.setProperty('--iy',INC.y.toFixed(3));requestAnimationFrame(pasoInclinar)}
+function iniciarInclinar(){if(!('DeviceOrientationEvent' in window))return;
+addEventListener('deviceorientation',e=>{if(e.gamma==null||e.beta==null)return;INC.tx=Math.max(-1,Math.min(1,e.gamma/30));INC.ty=Math.max(-1,Math.min(1,(e.beta-55)/30));if(!INC.vivo){INC.vivo=true;requestAnimationFrame(pasoInclinar)}})}
 
 /* Sonido generado con Web Audio (lluvia, truenos, pájaros, grillos, ranas, búho). */
 let ac=null,mg,rainG,patG,dropB,thB,crackB,birdBus,nightBus,RL=0,want=false;
@@ -473,6 +513,13 @@ $('sndbtn').onclick=()=>setSnd(!want);
 document.addEventListener('visibilitychange',()=>{if(!ac)return;if(document.hidden)ac.suspend();else if(want)ac.resume()});
 try{const mo=new MutationObserver(()=>aplicarVolumen());mo.observe($('md'),{attributes:true,attributeFilter:['class']});mo.observe($('mb'),{childList:true})}catch(e){}
 }
+
+function miau(){if(!AJ.sGato||!ac||!want||ac.state!=='running')return;const t=ac.currentTime,o=ac.createOscillator(),lf=ac.createOscillator(),lg=ac.createGain(),f=ac.createBiquadFilter(),gn=ac.createGain();
+o.type='sawtooth';o.frequency.setValueAtTime(480,t);o.frequency.linearRampToValueAtTime(900,t+.14);o.frequency.exponentialRampToValueAtTime(430,t+.6);
+lf.frequency.value=7;lg.gain.value=14;lf.connect(lg);lg.connect(o.frequency);
+f.type='bandpass';f.Q.value=3.2;f.frequency.setValueAtTime(900,t);f.frequency.linearRampToValueAtTime(2000,t+.16);f.frequency.exponentialRampToValueAtTime(750,t+.55);
+gn.gain.setValueAtTime(.0001,t);gn.gain.exponentialRampToValueAtTime(.5,t+.06);gn.gain.exponentialRampToValueAtTime(.0001,t+.65);
+o.connect(f);f.connect(gn);gn.connect(mg);lf.start(t);o.start(t);o.stop(t+.7);lf.stop(t+.7)}
 
 /* Radar de lluvia (RainViewer + OpenStreetMap). */
 let RV=null;
@@ -645,7 +692,10 @@ iniciarAjustes();
 iniciarTema();
 iniciarAhorro();
 iniciarPestanas();
+iniciarGato();
 iniciarCanvas();
+iniciarCristal();
+iniciarInclinar();
 iniciarSonido();
 render();
 arrancarAnimacion();
