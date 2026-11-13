@@ -1,5 +1,5 @@
 /* Constantes: paletas de cada estado del clima, departamentos y versión de la app. */
-const APP_VERSION='22';
+const APP_VERSION='23';
 const S={
 sun:{n:'Soleado',e:'☀️',a:'#2e8bd8',b:'#9bd6f7',t:32,f:35,r:5,c:10,uv:10,w:12,dir:60,h:46,sun:.55},
 cloud:{n:'Nublado',e:'⛅',a:'#5d7388',b:'#b3c2d0',t:27,f:29,r:25,c:78,uv:4,w:18,dir:120,h:68,sun:.55},
@@ -638,14 +638,18 @@ const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=
 /* Datos: descarga del pronóstico, caché sin conexión y actualización. */
 let LASTTS=0,STALE=false;
 function setUpd(){const b=$('upd');if(!b||!LASTTS)return;b.textContent=(STALE?'📴 Sin conexión · datos de '+(Date.now()-LASTTS<6e4?'hace un momento':ago(Date.now()-LASTTS)):'🔄 Actualizado '+ago(Date.now()-LASTTS));b.classList.toggle('stale',STALE)}
+let ESTADO0={cur:'sun',ts:0};
+function recalcEstadoCache(){const n=new Date(),hr=n.getHours(),nm=hr*60+n.getMinutes(),mm=t=>{const a=t.split(':');return +a[0]*60+ +a[1]},sr=D.sr&&D.ss;
+const luz=sr?(nm>mm(D.sr)&&nm<mm(D.ss)):(hr>=6&&hr<18);
+D.sun=luz?(sr?Math.min(.97,Math.max(.03,(nm-mm(D.sr))/(mm(D.ss)-mm(D.sr)))):.5):null;
+const c0=ESTADO0.cur,llueve=(c0==='rain'||c0==='storm')&&Date.now()-ESTADO0.ts<72e5;
+cur=!luz?(llueve?c0:'night'):(llueve?c0:((c0==='night'||c0==='rain'||c0==='storm')?(D.c>=60?'cloud':'sun'):c0))}
 function useCache(key,label){let o=null;try{o=JSON.parse(localStorage.getItem(key))}catch(e){}
 if(!o||!o.D||Date.now()-o.ts>432e5)return false;
 const h=Math.floor((Date.now()-o.ts)/36e5);D=o.D;D.stale=true;
 if(h>0&&D.h24)Object.keys(D.h24).forEach(k=>{D.h24[k]=D.h24[k].slice(h)});
 if(D.d7&&new Date(o.ts).toDateString()!==new Date().toDateString()&&D.d7.length>1){D.d7=D.d7.slice(1);D.d7[0].n='Hoy'}
-const n=new Date(),hr=n.getHours(),nm=hr*60+n.getMinutes(),mm=t=>{const a=t.split(':');return +a[0]*60+ +a[1]};
-D.sun=(D.sr&&D.ss&&nm>mm(D.sr)&&nm<mm(D.ss))?Math.min(.97,Math.max(.03,(nm-mm(D.sr))/(mm(D.ss)-mm(D.sr)))):null;
-cur=(hr>=19||hr<5)?'night':(o.cur==='night'?(D.c>=60?'cloud':'sun'):o.cur);
+ESTADO0={cur:o.cur,ts:o.ts};recalcEstadoCache();
 LASTTS=o.ts;STALE=true;$('city').textContent=label;$('g').style.visibility='visible';render();hideSplash();setUpd();return true}
 async function load(lat,lon,label){
 const KEY='wx:'+(+lat).toFixed(2)+','+(+lon).toFixed(2);
@@ -675,7 +679,8 @@ navigator.geolocation?navigator.geolocation.getCurrentPosition(p=>load(p.coords.
 function iniciarRed(){
 $('upd').onclick=()=>{$('upd').textContent='🔄 Actualizando…';start()};
 setInterval(setUpd,30000);
-document.addEventListener('visibilitychange',()=>{if(document.hidden)return;if(LASTTS&&Date.now()-LASTTS>(SAVER?18e5:6e5))start();else if(HORA_R!==-1&&nowH()!==HORA_R)render()});
+document.addEventListener('visibilitychange',()=>{if(document.hidden)return;if(LASTTS&&Date.now()-LASTTS>(SAVER?18e5:6e5))start();else if(HORA_R!==-1&&nowH()!==HORA_R){if(STALE&&D)recalcEstadoCache();render()}});
+setInterval(()=>{if(STALE&&D&&ESTADO0.ts){const a=cur,b=D.sun===null;recalcEstadoCache();if(cur!==a||(D.sun===null)!==b)render()}},60000);
 addEventListener('online',()=>{if(STALE)start()});
 }
 
